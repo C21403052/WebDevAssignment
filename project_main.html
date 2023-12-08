@@ -126,6 +126,9 @@
 	  <li class="nav-item">
         <a class="nav-link" href="/SignUp">Sign Up</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/inventory">Inventory</a>
+      </li>
     </ul>
   </div>
 </nav>
@@ -159,35 +162,6 @@
 
     <div id="userData"></div>
 
-    <h2 class="form">Add New Product</h2>
-    <form id="addUserForm">
-        <label for="product_name">Product Name:</label>
-        <input type="text" id="product_name" name="product_name" required>
-        <label for="desc">Description:</label>
-        <input type="text" id="desc" name="desc" required>
-        <button type="button" onclick="addCloth()">Add Product</button>
-    </form>
-
-    <h2 class="form">Update Product</h2>
-    <form id="updateUserForm">
-        <label for="userIdToUpdate">Product ID to Update:</label>
-        <input type="text" id="userIdToUpdate" name="userIdToUpdate" required>
-        <br>
-        <label for="newproduct_name">New Product Name:</label>
-        <input type="text" id="newproduct_name" name="newproduct_name" required>
-        <label for="newDesc">New Description:</label>
-        <input type="text" id="newDesc" name="newDesc" required>
-        <br>
-        <button type="button" onclick="updateUser()">Update Product</button>
-    </form>
-
-    <h2 class="form">Delete Product</h2>
-    <form id="deleteUserForm">
-        <label for="userIdToDelete">Product ID to Delete:</label>
-        <input type="text" id="userIdToDelete" name="userIdToDelete" required>
-        <br>
-        <button type="button" onclick="deleteUser()">Delete Product</button>
-    </form>
 
     <script>
       function fetchClothesData() {
