@@ -1,4 +1,5 @@
 var express = require("express");
+var session = require("express-session");
 var bcrypt = require('bcrypt');
 var bodyParser = require("body-parser");
 var { Pool } = require("pg");
@@ -10,12 +11,29 @@ var myPlaintextPassword = 'user_password';
 
 // PostgreSQL connection pool
 var pool = new Pool({
-  user: "postgres",
+  user: "BUILDER",
   host: "localhost",
   database: "postgres",
-  password: "Sp00ky!",
+  password: "password",
   port: 54321,
 });
+
+//Aarons database
+// var pool = new Pool({
+//     user: "postgres",
+//     host: "localhost",
+//     database: "postgres",
+//     password: "Sp00ky!",
+//     port: 54321,
+//   });
+
+// Set up session middleware
+app.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: false
+  }));
+  
 
 // Attempt to connect to the database
 pool.connect()
@@ -40,9 +58,28 @@ function startServer() {
   app.get("/login", function (req, res) {
     res.sendFile(path.join(__dirname, "login.html"));
   });
+  app.get("/loginError", function (req, res) {
+    res.sendFile(path.join(__dirname, "loginError.html"));
+  });
   app.get("/SignUp", function (req, res) {
     res.sendFile(path.join(__dirname, "SignUp.html"));
   });
+
+  function authenticateUser(req, res, next) {
+    // If the user is authenticated (user ID is stored in the session), proceed to the next middleware
+    if (req.session.userId) {
+      return next();
+    } else {
+      // If not authenticated, redirect to the login page or send an unauthorized response
+      res.sendFile(path.join(__dirname, "loginError.html"));
+    }
+  }
+  
+  app.get("/inventory", authenticateUser, function (req, res) {
+    res.sendFile(path.join(__dirname, "inventory.html"));
+  });
+
+
   app.get("/Users", async function (req, res) {
     try {
       const client = await pool.connect();
@@ -68,40 +105,8 @@ function startServer() {
       res.status(500).send(err);
     }
   });
-app.post("/validate-login", async (req, res) => {
-  try {
-	const { email, password } = req.body;
 
-	// Fetch the user from the database based on the provided email
-	const client = await pool.connect();
-	const result = await client.query("SELECT * FROM users WHERE email = $1", [email]);
-	client.release();
-
-	if (result.rows.length === 1) {
-	  // User with the provided email found
-	  const user = result.rows[0];
-
-	  // Compare the provided password with the hashed password from the database
-	  const isValidPassword = await bcrypt.compare(password, user.password);
-
-	  if (isValidPassword) {
-		// Passwords match, login is valid
-		res.json({ isValidUser: true });
-	  } else {
-		// Passwords do not match, login is invalid
-		res.json({ isValidUser: false });
-	  }
-	} else {
-	  // No user found with the provided email, login is invalid
-	  res.json({ isValidUser: false });
-	}
-  } 
-  catch (err) {
-	console.error("Error validating user login:", err);
-	res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
+  
   // Define a route for adding a new item of clothing (POST request)
   app.post("/clothes", async function (req, res) {
     try {
@@ -226,8 +231,10 @@ app.post("/validate-login", async (req, res) => {
 		  if (result.rows.length === 1) {
 			  const user = result.rows[0];
 			  const isValidPassword = await verifyPassword(password, user.password);
+              req.session.userId = user.id;
 			if(isValidPassword) {
 				res.json({isValidUser: true });
+
 			} else {
 				res.json({ isValidUser: false });
 			}
