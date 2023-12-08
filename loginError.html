@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap 5 Website Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+     .form {
+            font-family: 'Arial', sans-serif;
+            
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: #333;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 20px auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        form {
+            margin: 20px auto;
+            text-align: center;
+            max-width: 500px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+  .fakeimg {
+    height: 200px;
+    background: #EEE;
+  }
+  .top-section {
+	background-image: url('https://assets.vogue.com/photos/64f20336fe0b44228a8007e0/master/w_2560%2Cc_limit/00-story.jpg');
+	background-size: cover;
+	background-position: center;
+	text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+	color: white;
+	text-align: center;
+	padding: 5vw;
+  }
+  .square-image-container {
+    padding: 5vw;
+  }
+
+  .square-image {
+    max-width: 100%;
+    height: auto;
+  }
+
+  </style>
+</head>
+<body>
+
+<div class="top-section">
+  <h1>Cool Clothez</h1>
+  
+</div>
+
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+  <div class="container-fluid">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link active" href="/">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Winter Collection</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Mens</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Womans</a>
+      </li>
+    </ul>
+	<ul class="navbar-nav ms-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/login">Login</a>
+      </li>
+	  <li class="nav-item">
+        <a class="nav-link" href="/SignUp">Sign Up</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/inventory">Inventory</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<h1 class="form" >You need to log in to access inventory </h1>
+<br>
+<h1  class="form">Login</h1>
+    <form id="addUserForm">
+		<label for="email">Email:</label>
+        <input type="Email" id="email" name="email" required>
+		<label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="button" onclick="validateUsers()">Login</button>
+    </form>
+
+    <script>
+      function fetchUsersData() {
+    // Make a GET request to the server endpoint ("/users") to fetch users data
+    fetch("/Users")
+        .then(response => response.json())
+        .then(data => {
+            // Display the users data in the "userData" div
+            displayClothesData(data);
+        })
+        .catch(error => console.error('Error fetching clothes data:', error));
+}
+
+  
+function validateUsers() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  fetch("/userlogin", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email: email, password: password })
+  })
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      return response.json().then(data => Promise.reject(data));
+    }
+  })
+  .then(data => {
+    if (data.isValidUser) {
+      alert("Login Successful!");
+      window.location.href = "/inventory";
+    } else {
+      alert("Invalid email or password, Please try again.");
+    }
+  })
+  .catch(error => {
+    console.error('Error validating login:', error);
+    // Display the error message on the current page
+    alert(error.error || "An error occurred.");
+  });
+}
+
+
+      // Add similar functions for updating and deleting items of clothing
+  </script>
+  <div class="mt-5 p-4 bg-dark text-white text-center">
+  <p>Footer</p>
+</div>
+
+</body>
+</html>
