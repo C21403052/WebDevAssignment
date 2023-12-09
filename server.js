@@ -9,23 +9,23 @@ var saltRounds = 10;
 var myPlaintextPassword = 'user_password';
 
 
-// PostgreSQL connection pool
+/* PostgreSQL connection pool
 var pool = new Pool({
   user: "BUILDER",
   host: "localhost",
   database: "postgres",
   password: "password",
   port: 54321,
-});
+});*/
 
 //Aarons database
-// var pool = new Pool({
-//     user: "postgres",
-//     host: "localhost",
-//     database: "postgres",
-//     password: "Sp00ky!",
-//     port: 54321,
-//   });
+ var pool = new Pool({
+     user: "postgres",
+     host: "localhost",
+     database: "postgres",
+     password: "Sp00ky!",
+     port: 54321,
+   });
 
 // Set up session middleware
 app.use(session({
@@ -78,7 +78,18 @@ function startServer() {
   app.get("/inventory", authenticateUser, function (req, res) {
     res.sendFile(path.join(__dirname, "inventory.html"));
   });
-
+  
+  //route for logout of sessions and users
+  app.get("/logout", (req, res) => {
+	  req.session.destroy((err) => {
+		  if (err) {
+			console.error("Error destroying session:", err);
+			res.status(500).send("Internal Server Error");
+		  } else {
+			  res.redirect("/login");
+		  }
+	  });
+  });
 
   app.get("/Users", async function (req, res) {
     try {
@@ -88,10 +99,38 @@ function startServer() {
       client.release();
       res.send(Users);
     } catch (err) {
-      console.error("Error fetching clothes data:", err);
+      console.error("Error fetching users data:", err);
       res.status(500).send(err);
     }
   });
+  
+  // Define a route for fetching user data
+app.get("/user", async function (req, res) {
+    try {
+        if (req.session.userId) {
+            const client = await pool.connect();
+            const result = await client.query("SELECT email FROM Users WHERE id = $1", [req.session.userId]);
+            client.release();
+
+            if (result.rows.length === 1) {
+                const userEmail = result.rows[0].email;
+                // Send the user's email in the response
+                res.json({ userId: req.session.userId, userEmail: userEmail });
+            } else {
+                // Handle the case where the user is not found
+                res.status(404).json({ error: "User not found" });
+            }
+        } else {
+            // User is not logged in, send an empty response or an appropriate indicator
+            res.json(null);
+        }
+    } catch (err) {
+        console.error("Error fetching user data:", err);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
   // Define a route for the /clothes endpoint in Express
   app.get("/clothes", async function (req, res) {
     try {
