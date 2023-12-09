@@ -9,23 +9,23 @@ var saltRounds = 10;
 var myPlaintextPassword = 'user_password';
 
 
-/* PostgreSQL connection pool
+//PostgreSQL connection pool
 var pool = new Pool({
   user: "BUILDER",
   host: "localhost",
   database: "postgres",
   password: "password",
   port: 54321,
-});*/
+});
 
-//Aarons database
+/*Aarons database
  var pool = new Pool({
      user: "postgres",
      host: "localhost",
      database: "postgres",
      password: "Sp00ky!",
      port: 54321,
-   });
+   });*/
 
 // Set up session middleware
 app.use(session({
@@ -57,6 +57,12 @@ function startServer() {
   });
   app.get("/login", function (req, res) {
     res.sendFile(path.join(__dirname, "login.html"));
+  });
+  app.get("/mens", function (req, res) {
+    res.sendFile(path.join(__dirname, "Mens.html"));
+  });
+  app.get("/womens", function (req, res) {
+    res.sendFile(path.join(__dirname, "Womens.html"));
   });
   app.get("/loginError", function (req, res) {
     res.sendFile(path.join(__dirname, "loginError.html"));
@@ -215,6 +221,35 @@ app.get("/user", async function (req, res) {
       res.status(500).send("Internal Server Error");
     }
   });
+  
+	//route for getting clothes for men
+	app.get("/clothes/mens", async function (req, res) {
+	  try {
+		const client = await pool.connect();
+		const result = await client.query("SELECT * FROM clothes WHERE gender = 'Mens'");
+		const clothes = result.rows;
+		client.release();
+		res.send(clothes);
+	  } catch (err) {
+		console.error("Error fetching men's clothes data:", err);
+		res.status(500).send(err);
+	  }
+	});
+	//route for getting clothes for women
+	app.get("/clothes/womens", async function (req, res) {
+	  try {
+		const client = await pool.connect();
+		const result = await client.query("SELECT * FROM clothes WHERE gender = 'Womens'");
+		const clothes = result.rows;
+		client.release();
+		res.send(clothes);
+	  } catch (err) {
+		console.error("Error fetching men's clothes data:", err);
+		res.status(500).send(err);
+	  }
+	});
+
+  
   
   //Hash a password
   async function hashPassword(plainPassword) {
