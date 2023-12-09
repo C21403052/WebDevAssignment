@@ -97,7 +97,6 @@
   </style>
 </head>
 <body>
-
 <div class="top-section">
   <h1>Cool Clothez</h1>
   
@@ -107,7 +106,7 @@
   <div class="container-fluid">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link active" href="/home">Home</a>
+        <a class="nav-link active" href="/">Home</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">Winter Collection</a>
@@ -120,11 +119,14 @@
       </li>
     </ul>
 	<ul class="navbar-nav ms-auto">
-      <li class="nav-item">
+      <li class="nav-item" id="loginNavItem">
         <a class="nav-link" href="/login">Login</a>
       </li>
-	  <li class="nav-item">
+      <li class="nav-item" id="signupNavItem">
         <a class="nav-link" href="/SignUp">Sign Up</a>
+      </li>
+      <li class="nav-item" id="logoutNavItem" style="display: none;">
+        <a class="nav-link" href="/logout">Logout</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/inventory">Inventory</a>
@@ -164,7 +166,7 @@
 
 
     <script>
-      function fetchClothesData() {
+function fetchClothesData() {
     // Make a GET request to the server endpoint ("/clothes") to fetch clothes data
     fetch("/clothes")
         .then(response => response.json())
@@ -270,6 +272,33 @@ function deleteUser() {
     })
     .catch(error => console.error('Error deleting item of clothing:', error));
 }
+
+// Fetch user data and update the navigation bar
+  function updateNavbar() {
+    fetch("/user")
+      .then(response => response.json())
+      .then(user => {
+        const loginNavItem = document.getElementById("loginNavItem");
+        const signupNavItem = document.getElementById("signupNavItem");
+        const logoutNavItem = document.getElementById("logoutNavItem");
+
+        if (user) {
+          // User is logged in
+          loginNavItem.style.display = "none";
+          signupNavItem.style.display = "none";
+          logoutNavItem.style.display = "block";
+        } else {
+          // User is not logged in
+          loginNavItem.style.display = "block";
+          signupNavItem.style.display = "block";
+          logoutNavItem.style.display = "none";
+        }
+      })
+      .catch(error => console.error('Error fetching user data:', error));
+  }
+
+  // Call updateNavbar when the page loads
+  window.onload = updateNavbar;
   
       // Add similar functions for updating and deleting items of clothing
   </script>
