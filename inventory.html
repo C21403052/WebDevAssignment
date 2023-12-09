@@ -110,9 +110,6 @@
         <a class="nav-link" href="/">Home</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Winter Collection</a>
-      </li>
-      <li class="nav-item">
         <a class="nav-link" href="/mens">Mens</a>
       </li>
       <li class="nav-item">
@@ -150,26 +147,45 @@
     <div id="userData"></div>
 
     <h2 class="form">Add New Product</h2>
-    <form id="addUserForm">
-        <label for="product_name">Product Name:</label>
-        <input type="text" id="product_name" name="product_name" required>
-        <label for="desc">Description:</label>
-        <input type="text" id="desc" name="desc" required>
-        <button type="button" onclick="addCloth()">Add Product</button>
-    </form>
+<form id="addUserForm">
+    <label for="product_name">Product Name:</label>
+    <input type="text" id="product_name" name="product_name" required>
+    <label for="desc">Description:</label>
+    <input type="text" id="desc" name="desc" required>
+    <label for="price">Price:</label>
+    <input type="number" id="price" name="price" required>
+    <label for="image">Image URL:</label>
+    <input type="text" id="image" name="image" required>
+    <label for="gender">Gender:</label>
+    <select id="gender" name="gender" required>
+        <option value="Mens">Mens</option>
+        <option value="Womens">Womens</option>
+    </select>
+    <br>
+    <button type="button" onclick="addCloth()">Add Product</button>
+</form>
 
-    <h2 class="form">Update Product</h2>
-    <form id="updateUserForm">
-        <label for="userIdToUpdate">Product ID to Update:</label>
-        <input type="text" id="userIdToUpdate" name="userIdToUpdate" required>
-        <br>
-        <label for="newproduct_name">New Product Name:</label>
-        <input type="text" id="newproduct_name" name="newproduct_name" required>
-        <label for="newDesc">New Description:</label>
-        <input type="text" id="newDesc" name="newDesc" required>
-        <br>
-        <button type="button" onclick="updateUser()">Update Product</button>
-    </form>
+<h2 class="form">Update Product</h2>
+<form id="updateUserForm">
+    <label for="userIdToUpdate">Product ID to Update:</label>
+    <input type="text" id="userIdToUpdate" name="userIdToUpdate" required>
+    <br>
+    <label for="newproduct_name">New Product Name:</label>
+    <input type="text" id="newproduct_name" name="newproduct_name" required>
+    <label for="newDesc">New Description:</label>
+    <input type="text" id="newDesc" name="newDesc" required>
+    <label for="newPrice">New Price:</label>
+    <input type="number" id="newPrice" name="newPrice" required>
+    <label for="newImage">New Image URL:</label>
+    <input type="text" id="newImage" name="newImage" required>
+    <label for="newGender">New Gender:</label>
+    <select id="newGender" name="newGender" required>
+        <option value="Mens">Mens</option>
+        <option value="Womens">Womens</option>
+    </select>
+    <br>
+    <button type="button" onclick="updateUser()">Update Product</button>
+</form>
 
     <h2 class="form">Delete Product</h2>
     <form id="deleteUserForm">
@@ -225,22 +241,32 @@ function displayClothesData(data) {
 }
   
 function addCloth() {
-    // Get the product_name and product_description from the input fields
+    // Get values from input fields
     const product_name = document.getElementById("product_name").value;
     const desc = document.getElementById("desc").value;
+    const price = document.getElementById("price").value;
+    const image = document.getElementById("image").value;
+    const gender = document.getElementById("gender").value;
 
-    // Make a POST request to the server endpoint ("/clothes") to add a new item of clothing
+    // Make a POST request to add a new item of clothing
     fetch("/clothes", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ product_name: product_name, product_description: desc })
+        body: JSON.stringify({
+            product_name: product_name,
+            product_description: desc,
+            price: price,
+            image: image,
+            gender: gender
+        })
     })
-    .then(response => response.text())
+    .then(response => response.json())
     .then(data => {
         console.log(data);
         fetchClothesData(); // Refresh clothes data after adding a new item
+        alert("Addition Successful!");
     })
     .catch(error => console.error('Error adding item of clothing:', error));
 }
@@ -263,6 +289,7 @@ function updateUser() {
     .then(data => {
         console.log(data);
         fetchClothesData(); // Refresh clothes data after updating
+        alert("Update Successful!");
     })
     .catch(error => console.error('Error updating item of clothing:', error));
 }
@@ -283,6 +310,7 @@ function deleteUser() {
     .then(data => {
         console.log(data);
         fetchClothesData(); // Refresh clothes data after deleting
+        alert("Deletion Successful!");
     })
     .catch(error => console.error('Error deleting item of clothing:', error));
 }
