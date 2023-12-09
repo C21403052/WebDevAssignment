@@ -155,20 +155,20 @@ app.get("/user", async function (req, res) {
   // Define a route for adding a new item of clothing (POST request)
   app.post("/clothes", async function (req, res) {
     try {
-      const { product_name, product_description } = req.body;
-      const client = await pool.connect();
-      const result = await client.query(
-        "INSERT INTO clothes (product_name, product_description) VALUES ($1, $2) RETURNING *",
-        [product_name, product_description]
-      );
-      client.release();
-      const newItem = result.rows[0];
-      res.send(newItem);
+        const { product_name, product_description, price, image, gender } = req.body;
+        const client = await pool.connect();
+        const result = await client.query(
+            "INSERT INTO clothes (product_name, product_description, price, image, gender) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+            [product_name, product_description, price, image, gender]
+        );
+        client.release();
+        const newItem = result.rows[0];
+        res.send(newItem);
     } catch (err) {
-      console.error("Error adding item of clothing:", err);
-      res.status(500).send("Internal Server Error");
+        console.error("Error adding item of clothing:", err);
+        res.status(500).send("Internal Server Error");
     }
-  });
+});
   app.post("/Users", async function (req, res) {
     try {
       const { firstname, lastname, dob, email, password } = req.body;
@@ -189,20 +189,20 @@ app.get("/user", async function (req, res) {
   // Define a route for updating an item of clothing (PUT request)
   app.put("/clothes", async function (req, res) {
     try {
-      const { id, product_name, product_description } = req.body;
-      const client = await pool.connect();
-      const result = await client.query(
-        "UPDATE clothes SET product_name = $1, product_description = $2 WHERE id = $3 RETURNING *",
-        [product_name, product_description, id]
-      );
-      client.release();
-      const updatedItem = result.rows[0];
-      res.send(updatedItem);
+        const { id, product_name, product_description, price, image, gender } = req.body;
+        const client = await pool.connect();
+        const result = await client.query(
+            "UPDATE clothes SET product_name = $1, product_description = $2, price = $3, image = $4, gender = $5 WHERE id = $6 RETURNING *",
+            [product_name, product_description, price, image, gender, id]
+        );
+        client.release();
+        const updatedItem = result.rows[0];
+        res.send(updatedItem);
     } catch (err) {
-      console.error("Error updating item of clothing:", err);
-      res.status(500).send("Internal Server Error");
+        console.error("Error updating item of clothing:", err);
+        res.status(500).send("Internal Server Error");
     }
-  });
+});
 
   // Define a route for deleting an item of clothing (DELETE request)
   app.delete("/clothes", async function (req, res) {
