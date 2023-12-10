@@ -128,7 +128,7 @@
 <body>
 
 <div class="top-section">
-  <h1>Cool Clothez</h1>
+  <h1 style="color: white;">Cool Clothez</h1>
 </div>
 
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
@@ -141,18 +141,24 @@
         <a class="nav-link" href="/mens">Mens</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/womens">Womens</a>
-      </li>     
+        <a class="nav-link" href="/womens">Womans</a>
+      </li>
     </ul>
-    <ul class="navbar-nav ms-auto">
-      <li class="nav-item">
+	<ul class="navbar-nav ms-auto">
+      <li class="nav-item" id="loginNavItem">
         <a class="nav-link active" href="/login">Login</a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" id="signupNavItem">
         <a class="nav-link" href="/SignUp">Sign Up</a>
+      </li>
+      <li class="nav-item" id="logoutNavItem" style="display: none;">
+        <a class="nav-link active" href="/logout">Logout</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/inventory">Inventory</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/basket">Basket</a>
       </li>
     </ul>
   </div>
@@ -160,6 +166,7 @@
 
 <div class="container mt-5">
   <h2>All Clothes</h2>
+  
 
   <!-- Search bar -->
   <div class="search-bar">
@@ -191,29 +198,52 @@
     clothesContainer.innerHTML = "";
 
     data.forEach(item => {
-      const itemDiv = document.createElement("div");
-      itemDiv.classList.add("clothes-item");
+  const itemDiv = document.createElement("div");
+  itemDiv.classList.add("clothes-item");
 
-      const titleElement = document.createElement("h3");
-      titleElement.textContent = item.product_name;
+  const titleElement = document.createElement("h3");
+  titleElement.textContent = item.product_name;
 
-      const priceElement = document.createElement("p");
-      priceElement.textContent = "Price: €" + item.price;
+  const priceElement = document.createElement("p");
+  priceElement.textContent = "Price: €" + item.price;
 
-      const descriptionElement = document.createElement("p");
-      descriptionElement.textContent = item.product_description;
+  const descriptionElement = document.createElement("p");
+  descriptionElement.textContent = item.product_description;
 
-      const imageElement = document.createElement("img");
-      imageElement.src = item.image || "path_to_default_image"; // Provide a default image path if 'image' is not available
-      imageElement.alt = item.product_name;
+  const imageElement = document.createElement("img");
+  imageElement.src = item.image || "path_to_default_image";
+  imageElement.alt = item.product_name;
 
-      itemDiv.appendChild(titleElement);
-      itemDiv.appendChild(priceElement);
-      itemDiv.appendChild(descriptionElement);
-      itemDiv.appendChild(imageElement);
+  // New button for adding to basket
+  const addButton = document.createElement("button");
+  addButton.textContent = "Buy";
+  addButton.classList.add("ms-2"); // Add the ms-2 class for left margin
+  addButton.addEventListener("click", () => addToBasket(item.id));
 
-      clothesContainer.appendChild(itemDiv);
-    });
+  itemDiv.appendChild(titleElement);
+  itemDiv.appendChild(priceElement);
+  itemDiv.appendChild(descriptionElement);
+  itemDiv.appendChild(imageElement);
+  itemDiv.appendChild(addButton);
+
+  clothesContainer.appendChild(itemDiv);
+});
+  }
+
+  // Function to handle the "Add to Basket" button click
+  function addToBasket(productId) {
+    // Make a PUT request to update the "inBasket" status
+    fetch(`/clothes/${productId}/add-to-basket`, {
+      method: "PUT",
+    })
+      .then(response => response.json())
+      .then(updatedItem => {
+        console.log(`Item ${updatedItem.product_name} added to basket.`);
+        alert("Items added to basket");
+        // Optionally, you can update the UI to reflect the change
+        // For example, you could disable the button or change its text
+      })
+      .catch(error => console.error(`Error adding item to basket: ${error}`));
   }
 
   function searchClothes() {
