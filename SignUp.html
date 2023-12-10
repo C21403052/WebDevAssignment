@@ -99,7 +99,7 @@
 <body>
 
 <div class="top-section">
-  <h1>Cool Clothez</h1>
+  <h1 style="color: white;">Cool Clothez</h1>
   
 </div>
 
@@ -110,21 +110,27 @@
         <a class="nav-link" href="/">Home</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Mens</a>
+        <a class="nav-link" href="/mens">Mens</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Womens</a>
+        <a class="nav-link" href="/womens">Womans</a>
       </li>
     </ul>
 	<ul class="navbar-nav ms-auto">
-      <li class="nav-item">
-        <a class="nav-link" href="/login">Login</a>
+      <li class="nav-item" id="loginNavItem">
+        <a class="nav-link active" href="/login">Login</a>
       </li>
-	  <li class="nav-item">
-        <a class="nav-link active" href="/SignUp">Sign Up</a>
+      <li class="nav-item" id="signupNavItem">
+        <a class="nav-link" href="/SignUp">Sign Up</a>
+      </li>
+      <li class="nav-item" id="logoutNavItem" style="display: none;">
+        <a class="nav-link active" href="/logout">Logout</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/inventory">Inventory</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/basket">Basket</a>
       </li>
     </ul>
   </div>
