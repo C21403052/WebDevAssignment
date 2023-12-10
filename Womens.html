@@ -141,7 +141,7 @@
         <a class="nav-link" href="/mens">Mens</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/womens">Womans</a>
+        <a class="nav-link" href="/womens">Womens</a>
       </li>
     </ul>
 	<ul class="navbar-nav ms-auto">
@@ -174,64 +174,68 @@
   </div>
 
   <div class="clothes-container" id="clothesContainer">
-    <!-- Clothing items will be displayed here dynamically -->
+    <!-- clothing items will be displayed here dynamically -->
   </div>
 </div>
 
 <script>
-  let womensClothesData; // Global variable to store womens clothes data
+  let womensClothesData; //global variable to store womens clothes data
 
   function fetchWomensClothesData() {
-    // Make a GET request to the server endpoint ("/clothes/womens") to fetch clothes data
+    //fetch clothes data
     fetch("/clothes/womens")
       .then(response => response.json())
       .then(data => {
-        womensClothesData = data; // Assign data to the global variable
+        womensClothesData = data; //assign data to the global variable
         displayClothesData(data);
       })
       .catch(error => console.error('Error fetching womens clothes data:', error));
   }
 
   function displayClothesData(data) {
+    //display clothes 
     const clothesContainer = document.getElementById("clothesContainer");
     clothesContainer.innerHTML = "";
 
     data.forEach(item => {
-  const itemDiv = document.createElement("div");
-  itemDiv.classList.add("clothes-item");
 
-  const titleElement = document.createElement("h3");
-  titleElement.textContent = item.product_name;
+      //assigning data to the div  
+      const itemDiv = document.createElement("div");
+      itemDiv.classList.add("clothes-item");
 
-  const priceElement = document.createElement("p");
-  priceElement.textContent = "Price: €" + item.price;
+      const titleElement = document.createElement("h3");
+      titleElement.textContent = item.product_name;
 
-  const descriptionElement = document.createElement("p");
-  descriptionElement.textContent = item.product_description;
+      const priceElement = document.createElement("p");
+      priceElement.textContent = "Price: €" + item.price;
 
-  const imageElement = document.createElement("img");
-  imageElement.src = item.image || "path_to_default_image";
-  imageElement.alt = item.product_name;
+      const descriptionElement = document.createElement("p");
+      descriptionElement.textContent = item.product_description;
 
-  // New button for adding to basket
-  const addButton = document.createElement("button");
-  addButton.textContent = "Buy";
-  addButton.classList.add("ms-2"); // Add the ms-2 class for left margin
-  addButton.addEventListener("click", () => addToBasket(item.id));
+      const imageElement = document.createElement("img");
+      imageElement.src = item.image || "path_to_default_image";
+      imageElement.alt = item.product_name;
 
-  itemDiv.appendChild(titleElement);
-  itemDiv.appendChild(priceElement);
-  itemDiv.appendChild(descriptionElement);
-  itemDiv.appendChild(imageElement);
-  itemDiv.appendChild(addButton);
+      //button for adding to basket
+      const addButton = document.createElement("button");
+      addButton.textContent = "Buy";
+      addButton.classList.add("ms-2"); //add the ms-2 class for left margin
+      addButton.addEventListener("click", () => addToBasket(item.id));
 
-  clothesContainer.appendChild(itemDiv);
-});
+      //adds elements to div
+      itemDiv.appendChild(titleElement);
+      itemDiv.appendChild(priceElement);
+      itemDiv.appendChild(descriptionElement);
+      itemDiv.appendChild(imageElement);
+      itemDiv.appendChild(addButton);
+
+      clothesContainer.appendChild(itemDiv);
+    });
   }
 
-  // Function to handle the "Add to Basket" button click
+  //function to handle button click
   function addToBasket(productId) {
-    // Make a PUT request to update the "inBasket" status
+    //update the "inBasket" status
     fetch(`/clothes/${productId}/add-to-basket`, {
       method: "PUT",
     })
@@ -239,12 +243,12 @@
       .then(updatedItem => {
         console.log(`Item ${updatedItem.product_name} added to basket.`);
         alert("Items added to basket");
-        // Optionally, you can update the UI to reflect the change
-        // For example, you could disable the button or change its text
+        
       })
       .catch(error => console.error(`Error adding item to basket: ${error}`));
   }
 
+  //search box function
   function searchClothes() {
     const searchInput = document.getElementById("searchInput").value.toUpperCase();
     const filteredData = womensClothesData.filter(item => item.product_name.toUpperCase().startsWith(searchInput));
@@ -256,6 +260,7 @@
     updateNavbar();
   };
 
+  //update navbar to show user is logged in
   function updateNavbar() {
     fetch("/user")
       .then(response => response.json())
@@ -265,12 +270,12 @@
         const logoutNavItem = document.getElementById("logoutNavItem");
 
         if (user) {
-          // User is logged in
+          //user is logged in
           loginNavItem.style.display = "none";
           signupNavItem.style.display = "none";
           logoutNavItem.style.display = "block";
         } else {
-          // User is not logged in
+          //user is not logged in
           loginNavItem.style.display = "block";
           signupNavItem.style.display = "block";
           logoutNavItem.style.display = "none";
