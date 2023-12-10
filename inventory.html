@@ -99,7 +99,7 @@
 <body>
 
 <div class="top-section">
-  <h1>Cool Clothez</h1>
+  <h1 style="color: white;">Cool Clothez</h1>
   
 </div>
 
@@ -118,16 +118,19 @@
     </ul>
 	<ul class="navbar-nav ms-auto">
       <li class="nav-item" id="loginNavItem">
-        <a class="nav-link" href="/login">Login</a>
+        <a class="nav-link active" href="/login">Login</a>
       </li>
       <li class="nav-item" id="signupNavItem">
         <a class="nav-link" href="/SignUp">Sign Up</a>
       </li>
       <li class="nav-item" id="logoutNavItem" style="display: none;">
-        <a class="nav-link" href="/logout">Logout</a>
+        <a class="nav-link active" href="/logout">Logout</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link active" href="/inventory">Inventory</a>
+        <a class="nav-link" href="/inventory">Inventory</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/basket">Basket</a>
       </li>
     </ul>
   </div>
@@ -213,6 +216,9 @@ function displayClothesData(data) {
     // Clear previous data
     userDataDiv.innerHTML = "";
 
+    // Sort the data based on the ID
+    data.sort((a, b) => a.id - b.id);
+
     // Create a table to display the data
     const table = document.createElement("table");
     table.classList.add("table"); // Add Bootstrap table class for styling
@@ -275,7 +281,10 @@ function updateUser() {
     // Get the data from the input fields
     const userIdToUpdate = document.getElementById("userIdToUpdate").value;
     const newproduct_name = document.getElementById("newproduct_name").value;
-    const newDesc = document.getElementById("newDesc").value;
+    const desc = document.getElementById("newDesc").value;
+    const price = document.getElementById("newPrice").value;
+    const image = document.getElementById("newImage").value;
+    const gender = document.getElementById("newGender").value;
 
     // Make a PUT request to the server endpoint ("/clothes") to update an item of clothing
     fetch("/clothes", {
@@ -283,7 +292,14 @@ function updateUser() {
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ id: userIdToUpdate, product_name: newproduct_name, product_description: newDesc })
+        body: JSON.stringify({
+            id: userIdToUpdate,
+            product_name: newproduct_name,
+            product_description: desc,
+            price: price,
+            image: image,
+            gender: gender
+        })
     })
     .then(response => response.text())
     .then(data => {
