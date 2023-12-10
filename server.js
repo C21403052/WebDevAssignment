@@ -70,6 +70,9 @@ function startServer() {
   app.get("/SignUp", function (req, res) {
     res.sendFile(path.join(__dirname, "SignUp.html"));
   });
+  app.get("/basket", function (req, res) {
+    res.sendFile(path.join(__dirname, "basket.html"));
+  });
 
   function authenticateUser(req, res, next) {
     // If the user is authenticated (user ID is stored in the session), proceed to the next middleware
@@ -86,16 +89,28 @@ function startServer() {
   });
   
   //route for logout of sessions and users
-  app.get("/logout", (req, res) => {
-	  req.session.destroy((err) => {
-		  if (err) {
-			console.error("Error destroying session:", err);
-			res.status(500).send("Internal Server Error");
-		  } else {
-			  res.redirect("/login");
-		  }
-	  });
-  });
+  app.get("/logout", async (req, res) => {
+    try {
+        // Add the code to update the "inBasket" status for all items to false
+        const client = await pool.connect();
+        const result = await client.query("UPDATE clothes SET inBasket = $1 WHERE inBasket = $2 RETURNING *", [false, true]);
+        client.release();
+        const updatedItems = result.rows;
+
+        // Destroy the session after updating the basket status
+        req.session.destroy((err) => {
+            if (err) {
+                console.error("Error destroying session:", err);
+                res.status(500).send("Internal Server Error");
+            } else {
+                res.redirect("/login");
+            }
+        });
+    } catch (error) {
+        console.error('Error updating basket and destroying session:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
   app.get("/Users", async function (req, res) {
     try {
@@ -248,6 +263,71 @@ app.get("/user", async function (req, res) {
 		res.status(500).send(err);
 	  }
 	});
+
+    app.get("/clothes/basket", async function (req, res) {
+        try {
+          const client = await pool.connect();
+          const result = await client.query("SELECT * FROM clothes WHERE inBasket = 'True'");
+          const clothes = result.rows;
+          client.release();
+          res.send(clothes);
+        } catch (err) {
+          console.error("Error fetching basket data:", err);
+          res.status(500).send(err);
+        }
+      });
+
+      app.put("/clothes/:productId/add-to-basket", async function (req, res) {
+        try {
+          const productId = req.params.productId;
+          const client = await pool.connect();
+          const result = await client.query(
+            "UPDATE clothes SET inBasket = $1 WHERE id = $2 RETURNING *",
+            [true, productId]
+          );
+          client.release();
+          const updatedItem = result.rows[0];
+          res.send(updatedItem);
+        } catch (err) {
+          console.error("Error updating item of clothing to basket:", err);
+          res.status(500).send("Internal Server Error");
+        }
+      });
+
+      app.put("/clothes/:productId/remove-from-basket", async function (req, res) {
+        try {
+          const productId = req.params.productId;
+          const client = await pool.connect();
+          const result = await client.query(
+            "UPDATE clothes SET inBasket = $1 WHERE id = $2 RETURNING *",
+            [false, productId]
+          );
+          client.release();
+          const updatedItem = result.rows[0];
+          res.send(updatedItem);
+        } catch (err) {
+          console.error("Error updating item of clothing to basket:", err);
+          res.status(500).send("Internal Server Error");
+        }
+      });
+
+
+app.put('/clothes/pay-basket', async (req, res) => {
+  try {
+    console.log("Server received pay-basket request");
+    // Update the "inBasket" status for all items to false
+    const client = await pool.connect();
+    const result = await client.query("UPDATE clothes SET inBasket = $1 WHERE inBasket = $2 RETURNING *", [false, true]);
+    client.release();
+
+    const updatedItems = result.rows;
+    res.json({ message: 'Basket paid successfully.', updatedItems });
+  } catch (error) {
+    console.error('Error paying basket:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
   
   
