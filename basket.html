@@ -177,80 +177,85 @@
 </div>
 
 <script>
-  let allClothesData; // Global variable to store all clothes data
+  let allClothesData; //global variable to store all clothes data
 
-function fetchAllClothesData() {
-  // Make a GET request to the server endpoint ("/clothes") to fetch all clothes data
-  fetch("/clothes/basket")
-    .then(response => response.json())
-    .then(data => {
-      allClothesData = data; // Assign data to the global variable
-      displayClothesData(data);
-    })
-    .catch(error => console.error('Error fetching all clothes data:', error));
-}
-
-function displayClothesData(data) {
-  const clothesContainer = document.getElementById("clothesContainer");
-  const totalPriceElement = document.getElementById("totalPrice");
-  clothesContainer.innerHTML = "";
-
-  if (data.length === 0) {
-    const emptyBasketMessage = document.createElement("p");
-    emptyBasketMessage.textContent = "Your basket is empty.";
-    clothesContainer.appendChild(emptyBasketMessage);
-    totalPriceElement.textContent = "Total: €0.00"; // Update total price element
-  } else {
-    let totalPrice = 0;
-    data.forEach(item => {
-      const itemDiv = document.createElement("div");
-      itemDiv.classList.add("clothes-item");
-
-      const titleElement = document.createElement("h3");
-      titleElement.textContent = item.product_name;
-
-      const priceElement = document.createElement("p");
-      priceElement.textContent = "Price: €" + item.price;
-
-      totalPrice += parseFloat(item.price); // Accumulate the total price
-
-      const descriptionElement = document.createElement("p");
-      descriptionElement.textContent = item.product_description;
-
-      const imageElement = document.createElement("img");
-      imageElement.src = item.image || "path_to_default_image";
-      imageElement.alt = item.product_name;
-
-      // New button for removing from basket
-      const removeButton = document.createElement("button");
-      removeButton.textContent = "Remove";
-      removeButton.classList.add("ms-2");
-      removeButton.addEventListener("click", () => removeBasket(item.id));
-
-      itemDiv.appendChild(titleElement);
-      itemDiv.appendChild(priceElement);
-      itemDiv.appendChild(descriptionElement);
-      itemDiv.appendChild(imageElement);
-      itemDiv.appendChild(removeButton);
-
-      clothesContainer.appendChild(itemDiv);
-    });
-
-    totalPriceElement.textContent = "Total: €" + totalPrice.toFixed(2); // Update total price element
+  function fetchAllClothesData() {
+    //fetch all clothes data
+    fetch("/clothes/basket")
+      .then(response => response.json())
+      .then(data => {
+        allClothesData = data; //assign data to the global variable
+        displayClothesData(data);
+      })
+      .catch(error => console.error('Error fetching all clothes data:', error));
   }
-}
 
-  // Function to handle the "Add to Basket" button click
+  function displayClothesData(data) {
+    //display clothes 
+    const clothesContainer = document.getElementById("clothesContainer");
+    const totalPriceElement = document.getElementById("totalPrice");
+    clothesContainer.innerHTML = "";
+
+    if (data.length === 0) {
+      //if basket is empty
+      const emptyBasketMessage = document.createElement("p");
+      emptyBasketMessage.textContent = "Your basket is empty.";
+      clothesContainer.appendChild(emptyBasketMessage);
+      totalPriceElement.textContent = "Total: €0.00"; //update total price element
+    } else {
+      let totalPrice = 0;
+      data.forEach(item => {
+
+        //assigning data to the div 
+        const itemDiv = document.createElement("div");
+        itemDiv.classList.add("clothes-item");
+
+        const titleElement = document.createElement("h3");
+        titleElement.textContent = item.product_name;
+
+        const priceElement = document.createElement("p");
+        priceElement.textContent = "Price: €" + item.price;
+
+        totalPrice += parseFloat(item.price); //total price
+
+        const descriptionElement = document.createElement("p");
+        descriptionElement.textContent = item.product_description;
+
+        const imageElement = document.createElement("img");
+        imageElement.src = item.image || "path_to_default_image";
+        imageElement.alt = item.product_name;
+
+        //button for removing from basket
+        const removeButton = document.createElement("button");
+        removeButton.textContent = "Remove";
+        removeButton.classList.add("ms-2");
+        removeButton.addEventListener("click", () => removeBasket(item.id));
+
+        itemDiv.appendChild(titleElement);
+        itemDiv.appendChild(priceElement);
+        itemDiv.appendChild(descriptionElement);
+        itemDiv.appendChild(imageElement);
+        itemDiv.appendChild(removeButton);
+
+        clothesContainer.appendChild(itemDiv);
+      });
+
+      totalPriceElement.textContent = "Total: €" + totalPrice.toFixed(2); //update total price 
+    }
+  }
+
+  //function to handle thebutton click
   function removeBasket(productId) {
-    // Make a PUT request to update the "inBasket" status
+    //update the "inBasket" status
+    //remove from basket
     fetch(`/clothes/${productId}/remove-from-basket`, {
       method: "PUT",
     })
       .then(response => response.json())
       .then(updatedItem => {
         console.log(`Item ${updatedItem.product_name} removed from basket.`);
-        fetchAllClothesData(); // Fetch the updated data
-        // Update the UI with the new data
+        fetchAllClothesData(); //fetch the updated data
+        //update the UI with the new data
         displayClothesData(allClothesData);
       })
       .catch(error => console.error(`Error removing item from basket: ${error}`));
@@ -258,7 +263,8 @@ function displayClothesData(data) {
 
   function payBasket() {
     console.log("Trying to pay the basket");
-    // Make a PUT request to update the "inBasket" status for all items
+    //update the "inBasket" status for all items
+    //remove all from basket
     fetch("/clothes/pay-basket", {
         method: "PUT",
     })
@@ -268,13 +274,14 @@ function displayClothesData(data) {
     })
     .then(updatedItems => {
         console.log("Basket paid successfully. Updated items:", updatedItems);
-        fetchAllClothesData(); // Fetch the updated data
-        // Update the UI with the new data
+        fetchAllClothesData(); //fetch the updated data
+        //update the UI with the new data
         displayClothesData(allClothesData);
         alert("Items purchased successfully");
     })
     .catch(error => console.error(`Error paying basket: ${error}`));
 }
+  //search box function
   function searchClothes() {
     const searchInput = document.getElementById("searchInput").value.toUpperCase();
     const filteredData = allClothesData.filter(item => item.product_name.toUpperCase().startsWith(searchInput));
@@ -286,6 +293,7 @@ function displayClothesData(data) {
     updateNavbar();
   };
 
+  //update navbar to show user is logged in
   function updateNavbar() {
     fetch("/user")
       .then(response => response.json())
@@ -295,12 +303,12 @@ function displayClothesData(data) {
         const logoutNavItem = document.getElementById("logoutNavItem");
 
         if (user) {
-          // User is logged in
+          //user is logged in
           loginNavItem.style.display = "none";
           signupNavItem.style.display = "none";
           logoutNavItem.style.display = "block";
         } else {
-          // User is not logged in
+          //user is not logged in
           loginNavItem.style.display = "block";
           signupNavItem.style.display = "block";
           logoutNavItem.style.display = "none";
