@@ -113,7 +113,7 @@
         <a class="nav-link" href="/mens">Mens</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/womens">Womans</a>
+        <a class="nav-link" href="/womens">Womens</a>
       </li>
     </ul>
 	<ul class="navbar-nav ms-auto">
@@ -198,32 +198,32 @@
         <button type="button" onclick="deleteUser()">Delete Product</button>
     </form>
 
-    <script>
-      function fetchClothesData() {
-    // Make a GET request to the server endpoint ("/clothes") to fetch clothes data
-    fetch("/clothes")
-        .then(response => response.json())
-        .then(data => {
-            // Display the clothes data in the "userData" div
-            displayClothesData(data);
-        })
-        .catch(error => console.error('Error fetching clothes data:', error));
+<script>
+function fetchClothesData() {
+  //fetch clothes data
+  fetch("/clothes")
+  .then(response => response.json())
+  .then(data => {
+      //display the clothes data in the "userData" div
+      displayClothesData(data);
+  })
+  .catch(error => console.error('Error fetching clothes data:', error));
 }
 
 function displayClothesData(data) {
     const userDataDiv = document.getElementById("userData");
 
-    // Clear previous data
+    //clear previous data
     userDataDiv.innerHTML = "";
 
-    // Sort the data based on the ID
+    //sort the data based on the ID
     data.sort((a, b) => a.id - b.id);
 
-    // Create a table to display the data
+    //create a table to display the data
     const table = document.createElement("table");
-    table.classList.add("table"); // Add Bootstrap table class for styling
+    table.classList.add("table"); //add Bootstrap table class for styling
 
-    // Create the table header
+    //create the table header
     const thead = table.createTHead();
     const headerRow = thead.insertRow();
     for (const key in data[0]) {
@@ -232,7 +232,7 @@ function displayClothesData(data) {
         headerRow.appendChild(th);
     }
 
-    // Create the table body
+    //create the table body
     const tbody = table.createTBody();
     data.forEach(item => {
         const row = tbody.insertRow();
@@ -242,19 +242,19 @@ function displayClothesData(data) {
         }
     });
 
-    // Append the table to the userDataDiv
+    //append the table to the userDataDiv
     userDataDiv.appendChild(table);
 }
   
 function addCloth() {
-    // Get values from input fields
+    //get values from input fields
     const product_name = document.getElementById("product_name").value;
     const desc = document.getElementById("desc").value;
     const price = document.getElementById("price").value;
     const image = document.getElementById("image").value;
     const gender = document.getElementById("gender").value;
 
-    // Make a POST request to add a new item of clothing
+    //POST request to add a new item of clothing
     fetch("/clothes", {
         method: "POST",
         headers: {
@@ -271,14 +271,14 @@ function addCloth() {
     .then(response => response.json())
     .then(data => {
         console.log(data);
-        fetchClothesData(); // Refresh clothes data after adding a new item
+        fetchClothesData(); //refresh clothes data after adding a new item
         alert("Addition Successful!");
     })
     .catch(error => console.error('Error adding item of clothing:', error));
 }
 
 function updateUser() {
-    // Get the data from the input fields
+    //get the data from the input fields
     const userIdToUpdate = document.getElementById("userIdToUpdate").value;
     const newproduct_name = document.getElementById("newproduct_name").value;
     const desc = document.getElementById("newDesc").value;
@@ -286,7 +286,7 @@ function updateUser() {
     const image = document.getElementById("newImage").value;
     const gender = document.getElementById("newGender").value;
 
-    // Make a PUT request to the server endpoint ("/clothes") to update an item of clothing
+    //update an item of clothing
     fetch("/clothes", {
         method: "PUT",
         headers: {
@@ -304,17 +304,17 @@ function updateUser() {
     .then(response => response.text())
     .then(data => {
         console.log(data);
-        fetchClothesData(); // Refresh clothes data after updating
+        fetchClothesData(); //refresh clothes data after updating
         alert("Update Successful!");
     })
     .catch(error => console.error('Error updating item of clothing:', error));
 }
 
 function deleteUser() {
-    // Get the user ID to delete from the input field
+    //get the user ID to delete from the input field
     const userIdToDelete = document.getElementById("userIdToDelete").value;
 
-    // Make a DELETE request to the server endpoint ("/clothes") to delete an item of clothing
+    //delete an item of clothing
     fetch("/clothes", {
         method: "DELETE",
         headers: {
@@ -325,14 +325,14 @@ function deleteUser() {
     .then(response => response.text())
     .then(data => {
         console.log(data);
-        fetchClothesData(); // Refresh clothes data after deleting
+        fetchClothesData(); //refresh clothes data after deleting
         alert("Deletion Successful!");
     })
     .catch(error => console.error('Error deleting item of clothing:', error));
 }
   
 
-// Fetch user data and update the navigation bar
+//fetch user data and update the navigation bar
   function updateNavbar() {
     fetch("/user")
       .then(response => response.json())
@@ -342,12 +342,12 @@ function deleteUser() {
         const logoutNavItem = document.getElementById("logoutNavItem");
 
         if (user) {
-          // User is logged in
+          //user is logged in
           loginNavItem.style.display = "none";
           signupNavItem.style.display = "none";
           logoutNavItem.style.display = "block";
         } else {
-          // User is not logged in
+          //user is not logged in
           loginNavItem.style.display = "block";
           signupNavItem.style.display = "block";
           logoutNavItem.style.display = "none";
@@ -356,9 +356,9 @@ function deleteUser() {
       .catch(error => console.error('Error fetching user data:', error));
   }
 
-  // Call updateNavbar when the page loads
+  //call updateNavbar when the page loads
   window.onload = updateNavbar;
-      // Add similar functions for updating and deleting items of clothing
+      
   </script>
   <div class="mt-5 p-4 bg-dark text-white text-center">
   <p>Footer</p>
